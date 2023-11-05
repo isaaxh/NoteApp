@@ -25,6 +25,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 40,
     right: 20,
+    zIndex: 1,
 
     // shadow
     elevation: 3,
