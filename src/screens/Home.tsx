@@ -6,16 +6,22 @@ import Card from '../components/Card';
 
 export default function Home() {
   const data = [
-    {key: 'Devin', category: 'work', content: 'content', date: '18 jul'},
+    {
+      key: 'Devin',
+      category: 'work',
+      content:
+        'this is  some text to check the truncateion of the text in react native app',
+      date: '18 jul',
+    },
     {key: 'Dan', category: 'work', content: 'content', date: '15 may'},
-    {key: 'Dominic', category: 'work', content: 'content', date: '12 jan'},
+    {key: 'Dominic', category: 'personal', content: 'content', date: '12 jan'},
     {key: 'Jackson', category: 'work', content: 'content', date: '18 jul'},
     {key: 'James', category: 'work', content: 'content', date: '15 may'},
-    {key: 'Joel', category: 'work', content: 'content', date: '12 jan'},
+    {key: 'Joel', category: 'ideas', content: 'content', date: '12 jan'},
     {key: 'John', category: 'work', content: 'content', date: '02 feb'},
     {key: 'Jillian', category: 'work', content: 'content', date: '18 jul'},
     {key: 'Jimmy', category: 'work', content: 'content', date: '05 mar'},
-    {key: 'Julie', category: 'work', content: 'content', date: '10 dec'},
+    {key: 'Julie', category: 'personal', content: 'content', date: '10 dec'},
     {key: 'Tom', category: 'work', content: 'content', date: '10 dec'},
     {key: 'Chris', category: 'work', content: 'content', date: '10 dec'},
     {key: 'Hamid', category: 'work', content: 'content', date: '10 dec'},
@@ -64,7 +70,8 @@ const styles = StyleSheet.create({
   },
   cardContainer: {
     padding: 5,
-    paddingVertical: 30,
+    paddingTop: 30,
+    paddingBottom: 30,
   },
   columnWrapperStyle: {
     gap: 40,
