@@ -1,10 +1,15 @@
-import {StyleSheet, View, Text, FlatList} from 'react-native';
+import {StyleSheet, View, Text, FlatList, Button} from 'react-native';
 import React from 'react';
 import SearchBar from '../components/SearchBar';
 import AddNoteBtn from '../components/AddNoteBtn';
 import Card from '../components/Card';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {RootStackParamList} from '../App';
+import Header from '../components/Header';
 
-export default function Home() {
+type HomeProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
+
+const Home = ({navigation}: HomeProps) => {
   const data = [
     {
       key: 'Devin',
@@ -33,45 +38,59 @@ export default function Home() {
   ];
   return (
     <View style={styles.container}>
-      <SearchBar />
-      <AddNoteBtn />
-      <View style={styles.main}>
-        <View style={styles.cardContainer}>
-          <FlatList
-            data={data}
-            numColumns={2}
-            renderItem={({item}) => (
-              <Card
-                date={item.date}
-                title={item.key}
-                category={item.category}
-                content={item.content}
-              />
-            )}
-            ItemSeparatorComponent={() => (
-              <View style={styles.ItemSeparatorComponent} />
-            )}
-            columnWrapperStyle={styles.columnWrapperStyle}
-          />
+      <Header />
+      <View style={styles.contentContainer}>
+        <SearchBar />
+        <View style={styles.main}>
+          <View style={styles.cardContainer}>
+            <FlatList
+              data={data}
+              numColumns={2}
+              renderItem={({item}) => (
+                <Card
+                  date={item.date}
+                  title={item.key}
+                  category={item.category}
+                  content={item.content}
+                />
+              )}
+              ItemSeparatorComponent={() => (
+                <View style={styles.ItemSeparatorComponent} />
+              )}
+              columnWrapperStyle={styles.columnWrapperStyle}
+            />
+          </View>
         </View>
       </View>
+      <AddNoteBtn
+        onPress={() =>
+          navigation.navigate('AddNote', {
+            noteId: '123',
+          })
+        }
+      />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  main: {
-    flex: 1,
-  },
   container: {
     flex: 1,
     backgroundColor: '#FAF9F6',
-    padding: 10,
+    /* padding: 10, */
+    gap: 20,
+  },
+  contentContainer: {
+    flex: 1,
+    paddingHorizontal: 10,
+  },
+  main: {
+    flex: 1,
   },
   cardContainer: {
     padding: 5,
-    paddingTop: 30,
-    paddingBottom: 30,
+    paddingTop: 20,
+    paddingBottom: 20,
   },
   columnWrapperStyle: {
     gap: 40,
@@ -80,3 +99,5 @@ const styles = StyleSheet.create({
     height: 40,
   },
 });
+
+export default Home;

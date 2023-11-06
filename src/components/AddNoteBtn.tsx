@@ -2,9 +2,13 @@ import {StyleSheet, TouchableOpacity} from 'react-native';
 import React from 'react';
 import Icon from 'react-native-vector-icons/AntDesign';
 
-const AddNoteBtn = () => {
+type AddNoteBtnProps = {
+  onPress: () => void;
+};
+
+const AddNoteBtn = ({onPress}: AddNoteBtnProps) => {
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={onPress}>
       <Icon name="plus" color="#454545" size={30} />
     </TouchableOpacity>
   );
