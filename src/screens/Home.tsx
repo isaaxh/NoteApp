@@ -1,41 +1,35 @@
-import {StyleSheet, View, Text, FlatList, Button} from 'react-native';
-import React from 'react';
+import {StyleSheet, View, FlatList} from 'react-native';
+import React, {useState} from 'react';
 import SearchBar from '../components/SearchBar';
 import AddNoteBtn from '../components/AddNoteBtn';
 import Card from '../components/Card';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../App';
 import Header from '../components/Header';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {noteProps} from '../contexts/GlobalContext';
+import {useFocusEffect} from '@react-navigation/native';
 
 type HomeProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
+const ItemSeparatorComponent = () => (
+  <View style={styles.ItemSeparatorComponent} />
+);
+
 const Home = ({navigation}: HomeProps) => {
-  const data = [
-    {
-      key: 'Devin',
-      category: 'work',
-      content:
-        'this is  some text to check the truncateion of the text in react native app',
-      date: '18 jul',
-    },
-    {key: 'Dan', category: 'work', content: 'content', date: '15 may'},
-    {key: 'Dominic', category: 'personal', content: 'content', date: '12 jan'},
-    {key: 'Jackson', category: 'work', content: 'content', date: '18 jul'},
-    {key: 'James', category: 'work', content: 'content', date: '15 may'},
-    {key: 'Joel', category: 'ideas', content: 'content', date: '12 jan'},
-    {key: 'John', category: 'work', content: 'content', date: '02 feb'},
-    {key: 'Jillian', category: 'work', content: 'content', date: '18 jul'},
-    {key: 'Jimmy', category: 'work', content: 'content', date: '05 mar'},
-    {key: 'Julie', category: 'personal', content: 'content', date: '10 dec'},
-    {key: 'Tom', category: 'work', content: 'content', date: '10 dec'},
-    {key: 'Chris', category: 'work', content: 'content', date: '10 dec'},
-    {key: 'Hamid', category: 'work', content: 'content', date: '10 dec'},
-    {key: 'Hammond', category: 'work', content: 'content', date: '10 dec'},
-    {key: 'Khalid', category: 'work', content: 'content', date: '10 dec'},
-    {key: 'Howard', category: 'work', content: 'content', date: '10 dec'},
-    {key: 'Harry', category: 'work', content: 'content', date: '10 dec'},
-    {key: 'Larry', category: 'work', content: 'content', date: '10 dec'},
-  ];
+  const [notes, setNotes] = useState<noteProps[]>();
+  useFocusEffect(() => {
+    const getData = async () => {
+      try {
+        const jsonValue = await AsyncStorage.getItem('note');
+        return jsonValue != null ? JSON.parse(jsonValue) : null;
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    getData().then(noteArr => setNotes(noteArr));
+  });
+  console.log(notes);
   return (
     <View style={styles.container}>
       <Header />
@@ -44,19 +38,17 @@ const Home = ({navigation}: HomeProps) => {
         <View style={styles.main}>
           <View style={styles.cardContainer}>
             <FlatList
-              data={data}
+              data={notes}
               numColumns={2}
               renderItem={({item}) => (
                 <Card
                   date={item.date}
-                  title={item.key}
+                  title={item.title}
                   category={item.category}
-                  content={item.content}
+                  content={item.description}
                 />
               )}
-              ItemSeparatorComponent={() => (
-                <View style={styles.ItemSeparatorComponent} />
-              )}
+              ItemSeparatorComponent={ItemSeparatorComponent}
               columnWrapperStyle={styles.columnWrapperStyle}
             />
           </View>

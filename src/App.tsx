@@ -1,10 +1,13 @@
-import {StyleSheet, SafeAreaView} from 'react-native';
 import React from 'react';
 import Home from './screens/Home';
 import AddNote from './screens/AddNote';
-import Header from './components/Header';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import SaveNote from './components/SaveNote';
+import GlobalContextProvider, {
+  GlobalContextProps,
+} from './contexts/GlobalContext';
+import useGlobal from './hooks/useGlobal';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -13,38 +16,31 @@ export type RootStackParamList = {
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
+const HeaderSaveNote = () => {
+  const {notes} = useGlobal() as GlobalContextProps;
+  return <SaveNote notes={notes} />;
+};
+
+const AddNoteScreen = () => {
+  const {notes} = useGlobal() as GlobalContextProps;
+  return <AddNote notes={notes} />;
+};
+
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen
-          name="Home"
-          component={Home}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen name="AddNote" component={AddNote} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <GlobalContextProvider>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Home">
+          <Stack.Screen
+            name="Home"
+            component={Home}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen name="AddNote" component={AddNoteScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </GlobalContextProvider>
   );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
-
-{
-  /* <SafeAreaView style={styles.container}> */
-}
-{
-  /*   <Header /> */
-}
-{
-  /*   <Home /> */
-}
-{
-  /* </SafeAreaView>; */
 }

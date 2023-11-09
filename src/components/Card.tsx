@@ -1,7 +1,12 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import type {PropsWithChildren} from 'react';
 import globalStyles from '../styles/globalStyles';
+import useGlobal from '../hooks/useGlobal';
+import {
+  CategoryColorsProps,
+  GlobalContextProps,
+} from '../contexts/GlobalContext';
 
 type CardProps = {
   date: string;
@@ -10,28 +15,18 @@ type CardProps = {
   content: string;
 };
 
-type CategoryColorsTypes = {
-  [key: string]: string;
-};
-
-const categoryColors = {
-  work: '#FFD460',
-  personal: '#FF4D4D',
-  ideas: '#4D4DFF',
-  home: '#4DFF4D',
-};
-
 const Card = ({
   date,
   title,
   category,
   content,
 }: PropsWithChildren<CardProps>) => {
+  const {categoryColors} = useGlobal() as GlobalContextProps;
   return (
     <TouchableOpacity
       style={[
         styles.card,
-        {backgroundColor: (categoryColors as CategoryColorsTypes)[category]},
+        {backgroundColor: (categoryColors as CategoryColorsProps)[category]},
       ]}>
       <View style={styles.dateContainer}>
         <Text style={[globalStyles.text, styles.date]}>{date}</Text>

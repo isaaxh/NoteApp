@@ -4,13 +4,11 @@ import globalStyles from '../styles/globalStyles';
 
 const SearchBar = () => {
   return (
-    <View>
-      <TextInput
-        style={[styles.container, globalStyles.text]}
-        placeholder="Search here..."
-        placeholderTextColor="#454545"
-      />
-    </View>
+    <TextInput
+      style={[styles.container, globalStyles.text]}
+      placeholder="Search here..."
+      placeholderTextColor="#454545"
+    />
   );
 };
 
@@ -19,7 +17,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 1,
     borderColor: '#E5E5E5',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#FFFFFF',
     paddingHorizontal: 15,
   },
 });
