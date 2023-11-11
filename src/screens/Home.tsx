@@ -1,5 +1,5 @@
-import {StyleSheet, View, FlatList} from 'react-native';
-import React, {useState} from 'react';
+import {StyleSheet, View, FlatList, ActivityIndicator} from 'react-native';
+import React, {useCallback, useEffect, useState} from 'react';
 import SearchBar from '../components/SearchBar';
 import AddNoteBtn from '../components/AddNoteBtn';
 import Card from '../components/Card';
@@ -8,7 +8,7 @@ import {RootStackParamList} from '../App';
 import Header from '../components/Header';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {noteProps} from '../contexts/GlobalContext';
-import {useFocusEffect} from '@react-navigation/native';
+import {useFocusEffect, useIsFocused} from '@react-navigation/native';
 
 type HomeProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
@@ -17,19 +17,33 @@ const ItemSeparatorComponent = () => (
 );
 
 const Home = ({navigation}: HomeProps) => {
-  const [notes, setNotes] = useState<noteProps[]>();
-  useFocusEffect(() => {
-    const getData = async () => {
-      try {
-        const jsonValue = await AsyncStorage.getItem('note');
-        return jsonValue != null ? JSON.parse(jsonValue) : null;
-      } catch (e) {
-        console.log(e);
-      }
-    };
-    getData().then(noteArr => setNotes(noteArr));
-  });
-  console.log(notes);
+  const [notes, setNotes] = useState<noteProps[] | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useFocusEffect(
+    useCallback(() => {
+      let isActive = true;
+      setLoading(true);
+      const getData = async () => {
+        try {
+          const jsonValue = await AsyncStorage.getItem('notes');
+          return jsonValue != null ? JSON.parse(jsonValue) : null;
+        } catch (e) {
+          console.log(e);
+          setLoading(false);
+        }
+      };
+      setTimeout(() => {
+        if (isActive) {
+          getData().then(setNotes);
+          setLoading(false);
+        }
+      }, 1500);
+
+      return () => (isActive = false);
+    }, []),
+  );
+
   return (
     <View style={styles.container}>
       <Header />
@@ -37,20 +51,27 @@ const Home = ({navigation}: HomeProps) => {
         <SearchBar />
         <View style={styles.main}>
           <View style={styles.cardContainer}>
-            <FlatList
-              data={notes}
-              numColumns={2}
-              renderItem={({item}) => (
-                <Card
-                  date={item.date}
-                  title={item.title}
-                  category={item.category}
-                  content={item.description}
-                />
-              )}
-              ItemSeparatorComponent={ItemSeparatorComponent}
-              columnWrapperStyle={styles.columnWrapperStyle}
-            />
+            {loading ? (
+              <ActivityIndicator size="large" />
+            ) : (
+              <FlatList
+                data={notes}
+                numColumns={2}
+                renderItem={({item}) => (
+                  <Card
+                    notes={notes}
+                    setNotes={setNotes}
+                    noteId={item.noteId}
+                    date={item.date}
+                    title={item.title}
+                    category={item.category}
+                    content={item.description}
+                  />
+                )}
+                ItemSeparatorComponent={ItemSeparatorComponent}
+                columnWrapperStyle={styles.columnWrapperStyle}
+              />
+            )}
           </View>
         </View>
       </View>

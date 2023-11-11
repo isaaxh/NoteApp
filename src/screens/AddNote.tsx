@@ -1,5 +1,5 @@
-import {Button, StyleSheet, Text, TextInput, View} from 'react-native';
-import React, {useEffect, useRef, useState} from 'react';
+import {StyleSheet, TextInput, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import globalStyles from '../styles/globalStyles';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Moment from 'moment';
@@ -41,15 +41,16 @@ const AddNote = ({}: AddNoteProps) => {
   useEffect(() => {
     const storeNewNote = async () => {
       try {
-        const notes = await AsyncStorage.getItem('note');
+        const notes = await AsyncStorage.getItem('notes');
         if (notes !== null) {
-          console.log(notes);
           const newNotes = JSON.parse(notes);
           newNotes.push(note);
-          await AsyncStorage.setItem('note', JSON.stringify(newNotes));
+          await AsyncStorage.setItem('notes', JSON.stringify(newNotes));
         } else {
           console.log('no notes found');
-          await AsyncStorage.setItem('note', JSON.stringify(note));
+          const newNotes: noteProps[] = [];
+          newNotes.push(note);
+          await AsyncStorage.setItem('notes', JSON.stringify(newNotes));
         }
       } catch (e) {
         console.log(e);
