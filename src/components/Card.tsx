@@ -3,16 +3,13 @@ import React from 'react';
 import type {PropsWithChildren} from 'react';
 import globalStyles from '../styles/globalStyles';
 import useGlobal from '../hooks/useGlobal';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   CategoryColorsProps,
   GlobalContextProps,
-  noteProps,
 } from '../contexts/GlobalContext';
+import useAsyncStorage from '../hooks/useAsyncStorage';
 
 type CardProps = {
-  setNotes: React.Dispatch<React.SetStateAction<noteProps[] | null>>;
-  notes: noteProps[] | null;
   noteId: string;
   date: string;
   title: string;
@@ -21,29 +18,19 @@ type CardProps = {
 };
 
 const Card = ({
-  notes,
-  setNotes,
   noteId,
   date,
   title,
   category,
   content,
 }: PropsWithChildren<CardProps>) => {
-  const {categoryColors} = useGlobal() as GlobalContextProps;
-
-  const storeNewNotes = async (newNotes: noteProps[]) => {
-    try {
-      await AsyncStorage.setItem('notes', JSON.stringify(newNotes));
-    } catch (e) {
-      console.log(e);
-    }
-  };
+  const {categoryColors, notes} = useGlobal() as GlobalContextProps;
+  const {storeNewNotes} = useAsyncStorage();
 
   const handleDelete = (noteID: string) => {
     const newNotes = notes?.filter(note => note.noteId !== noteID);
     if (newNotes) {
       storeNewNotes(newNotes);
-      setNotes(newNotes);
     }
   };
 

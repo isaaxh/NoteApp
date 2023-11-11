@@ -1,14 +1,12 @@
 import {StyleSheet, View, FlatList, ActivityIndicator} from 'react-native';
-import React, {useCallback, useEffect, useState} from 'react';
+import React from 'react';
 import SearchBar from '../components/SearchBar';
 import AddNoteBtn from '../components/AddNoteBtn';
 import Card from '../components/Card';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../App';
 import Header from '../components/Header';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {noteProps} from '../contexts/GlobalContext';
-import {useFocusEffect, useIsFocused} from '@react-navigation/native';
+import useAsyncStorage from '../hooks/useAsyncStorage';
 
 type HomeProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
@@ -17,32 +15,7 @@ const ItemSeparatorComponent = () => (
 );
 
 const Home = ({navigation}: HomeProps) => {
-  const [notes, setNotes] = useState<noteProps[] | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useFocusEffect(
-    useCallback(() => {
-      let isActive = true;
-      setLoading(true);
-      const getData = async () => {
-        try {
-          const jsonValue = await AsyncStorage.getItem('notes');
-          return jsonValue != null ? JSON.parse(jsonValue) : null;
-        } catch (e) {
-          console.log(e);
-          setLoading(false);
-        }
-      };
-      setTimeout(() => {
-        if (isActive) {
-          getData().then(setNotes);
-          setLoading(false);
-        }
-      }, 1500);
-
-      return () => (isActive = false);
-    }, []),
-  );
+  const {notes, loading} = useAsyncStorage();
 
   return (
     <View style={styles.container}>
@@ -59,8 +32,6 @@ const Home = ({navigation}: HomeProps) => {
                 numColumns={2}
                 renderItem={({item}) => (
                   <Card
-                    notes={notes}
-                    setNotes={setNotes}
                     noteId={item.noteId}
                     date={item.date}
                     title={item.title}

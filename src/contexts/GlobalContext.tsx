@@ -5,9 +5,11 @@ type GlobalContextProviderProps = {
 };
 
 export type GlobalContextProps = {
+  notes: noteProps[] | null;
+  setNotes: React.Dispatch<React.SetStateAction<noteProps[] | null>>;
   categories: category[];
-  categoryColors: CategoryColorsProps;
   setCategories: React.Dispatch<React.SetStateAction<category[]>>;
+  categoryColors: CategoryColorsProps;
   setCategoryColors: React.Dispatch<React.SetStateAction<CategoryColorsProps>>;
 };
 
@@ -28,6 +30,7 @@ export type CategoryColorsProps = {
 export const GlobalContext = createContext<GlobalContextProps | null>(null);
 
 const GlobalContextProvider = ({children}: GlobalContextProviderProps) => {
+  const [notes, setNotes] = useState<noteProps[] | null>(null);
   const [categories, setCategories] = useState<category[]>([
     {label: 'Work', value: 'work'},
     {label: 'Personal', value: 'personal'},
@@ -42,6 +45,8 @@ const GlobalContextProvider = ({children}: GlobalContextProviderProps) => {
   });
 
   const value: GlobalContextProps = {
+    notes,
+    setNotes,
     categories,
     setCategories,
     categoryColors,

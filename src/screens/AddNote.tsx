@@ -5,7 +5,6 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import Moment from 'moment';
 import {GlobalContextProps, noteProps} from '../contexts/GlobalContext';
 import useGlobal from '../hooks/useGlobal';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 // navigation
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
@@ -13,6 +12,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../App';
 import SaveNote from '../components/SaveNote';
 import uuid from 'react-uuid';
+import useAsyncStorage from '../hooks/useAsyncStorage';
 
 type AddNoteProps = NativeStackScreenProps<RootStackParamList, 'AddNote'>;
 
@@ -23,6 +23,7 @@ const AddNote = ({}: AddNoteProps) => {
   const [value, setValue] = useState('');
 
   const {categories, setCategories} = useGlobal() as GlobalContextProps;
+  const {storeNewNote} = useAsyncStorage();
 
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -39,26 +40,8 @@ const AddNote = ({}: AddNoteProps) => {
   };
 
   useEffect(() => {
-    const storeNewNote = async () => {
-      try {
-        const notes = await AsyncStorage.getItem('notes');
-        if (notes !== null) {
-          const newNotes = JSON.parse(notes);
-          newNotes.push(note);
-          await AsyncStorage.setItem('notes', JSON.stringify(newNotes));
-        } else {
-          console.log('no notes found');
-          const newNotes: noteProps[] = [];
-          newNotes.push(note);
-          await AsyncStorage.setItem('notes', JSON.stringify(newNotes));
-        }
-      } catch (e) {
-        console.log(e);
-      }
-    };
-
     const handleSavePress = () => {
-      storeNewNote();
+      storeNewNote(note);
       navigation.navigate('Home');
     };
 
