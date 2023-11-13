@@ -1,38 +1,34 @@
-import {StyleSheet, TextInput, View} from 'react-native';
+import {StyleSheet, Text, TextInput, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import globalStyles from '../styles/globalStyles';
 import DropDownPicker from 'react-native-dropdown-picker';
-import Moment from 'moment';
-import {GlobalContextProps, noteProps} from '../contexts/GlobalContext';
 import useGlobal from '../hooks/useGlobal';
-import uuid from 'react-uuid';
 import useAsyncStorage from '../hooks/useAsyncStorage';
-import SaveNote from '../components/SaveNote';
+import {styles} from '../screens/AddNote';
+import {GlobalContextProps, noteProps} from '../contexts/GlobalContext';
+import Moment from 'moment';
 // navigation
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../App';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import SaveNote from '../components/SaveNote';
 
-type AddNoteProps = NativeStackScreenProps<RootStackParamList, 'AddNote'>;
+type EditNoteProps = NativeStackScreenProps<RootStackParamList, 'EditNote'>;
 
-const AddNote = () => {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('');
+const EditNote = ({route, navigation}: EditNoteProps) => {
+  const note = route.params;
+  const [title, setTitle] = useState(note.title);
+  const [description, setDescription] = useState(note.content);
+  const [category, setCategory] = useState(note.category);
   const [open, setOpen] = useState(false);
 
   const {categories, setCategories} = useGlobal() as GlobalContextProps;
-  const {storeNewNote} = useAsyncStorage();
-
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const {updateNote} = useAsyncStorage();
 
   Moment.locale('en');
   const formattedDate = Moment(new Date()).format('DD MMM');
 
-  const note: noteProps = {
-    id: uuid(),
+  const updatedNote: noteProps = {
+    id: note.id,
     date: formattedDate,
     title,
     description,
@@ -41,7 +37,7 @@ const AddNote = () => {
 
   useEffect(() => {
     const handleSavePress = () => {
-      storeNewNote(note);
+      updateNote(updatedNote);
       navigation.popToTop();
     };
 
@@ -83,33 +79,4 @@ const AddNote = () => {
   );
 };
 
-export default AddNote;
-
-export const styles = StyleSheet.create({
-  container: {
-    padding: 10,
-    gap: 20,
-  },
-  controls: {
-    flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#E5E5E5',
-  },
-  dropDownTouchable: {
-    flexDirection: 'row',
-    height: 40,
-    padding: 10,
-  },
-  dropDownItem: {
-    padding: 10,
-    flexDirection: 'row',
-  },
-  dropDownContainer: {
-    borderColor: '#E5E5E5',
-  },
-  placeholder: {
-    color: '#454545',
-  },
-});
+export default EditNote;

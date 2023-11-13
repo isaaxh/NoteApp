@@ -14,7 +14,7 @@ export type GlobalContextProps = {
 };
 
 export type noteProps = {
-  noteId: string;
+  id: string;
   date: string;
   title: string;
   description: string;

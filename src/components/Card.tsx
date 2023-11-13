@@ -15,9 +15,11 @@ type CardProps = {
   title: string;
   category: string;
   content: string;
+  onPress: () => void;
 };
 
 const Card = ({
+  onPress,
   noteId,
   date,
   title,
@@ -28,7 +30,7 @@ const Card = ({
   const {storeNewNotes} = useAsyncStorage();
 
   const handleDelete = (noteID: string) => {
-    const newNotes = notes?.filter(note => note.noteId !== noteID);
+    const newNotes = notes?.filter(note => note.id !== noteID);
     if (newNotes) {
       storeNewNotes(newNotes);
     }
@@ -59,6 +61,7 @@ const Card = ({
         {backgroundColor: (categoryColors as CategoryColorsProps)[category]},
       ]}
       onLongPress={handleLongPress}
+      onPress={onPress}
       delayLongPress={1000}
       android_ripple={{color: 'rgba(0,0,0,0.1)'}}>
       <View style={styles.dateContainer}>

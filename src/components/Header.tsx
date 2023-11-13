@@ -1,10 +1,18 @@
 import {TouchableOpacity, Image, StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
-
 import globalStyles from '../styles/globalStyles';
+import useAsyncStorage from '../hooks/useAsyncStorage';
 
 export default function Header() {
+  const {sortNotes} = useAsyncStorage();
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+
+  const handleSortPress = () => {
+    setSortOrder(prev => (prev === 'asc' ? 'desc' : 'asc'));
+    sortNotes(sortOrder);
+  };
+
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.profileImg}>
@@ -14,7 +22,7 @@ export default function Header() {
         />
       </TouchableOpacity>
       <Text style={[styles.label, globalStyles.text]}>Note App</Text>
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={handleSortPress}>
         <Icon name="sort-amount-desc" size={20} color="black" />
       </TouchableOpacity>
     </View>

@@ -1,5 +1,12 @@
-import {StyleSheet, View, FlatList, ActivityIndicator} from 'react-native';
-import React from 'react';
+import {
+  StyleSheet,
+  View,
+  FlatList,
+  ActivityIndicator,
+  RefreshControl,
+  ScrollView,
+} from 'react-native';
+import React, {useCallback, useState} from 'react';
 import SearchBar from '../components/SearchBar';
 import AddNoteBtn from '../components/AddNoteBtn';
 import Card from '../components/Card';
@@ -8,14 +15,23 @@ import {RootStackParamList} from '../App';
 import Header from '../components/Header';
 import useAsyncStorage from '../hooks/useAsyncStorage';
 
-type HomeProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
+export type HomeProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 const ItemSeparatorComponent = () => (
   <View style={styles.ItemSeparatorComponent} />
 );
 
 const Home = ({navigation}: HomeProps) => {
-  const {notes, loading} = useAsyncStorage();
+  const {notes, loading, getData} = useAsyncStorage();
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    /* getData(); */
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -23,7 +39,12 @@ const Home = ({navigation}: HomeProps) => {
       <View style={styles.contentContainer}>
         <SearchBar />
         <View style={styles.main}>
-          <View style={styles.cardContainer}>
+          <View
+            style={styles.cardContainer}
+            /* refreshControl={ */
+            /*   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} /> */
+            /* } */
+          >
             {loading ? (
               <ActivityIndicator size="large" />
             ) : (
@@ -32,7 +53,16 @@ const Home = ({navigation}: HomeProps) => {
                 numColumns={2}
                 renderItem={({item}) => (
                   <Card
-                    noteId={item.noteId}
+                    onPress={() => {
+                      navigation.push('EditNote', {
+                        id: item.id,
+                        date: item.date,
+                        title: item.title,
+                        category: item.category,
+                        content: item.description,
+                      });
+                    }}
+                    noteId={item.id}
                     date={item.date}
                     title={item.title}
                     category={item.category}
@@ -46,13 +76,7 @@ const Home = ({navigation}: HomeProps) => {
           </View>
         </View>
       </View>
-      <AddNoteBtn
-        onPress={() =>
-          navigation.navigate('AddNote', {
-            noteId: '123',
-          })
-        }
-      />
+      <AddNoteBtn onPress={() => navigation.push('AddNote')} />
     </View>
   );
 };
