@@ -1,9 +1,8 @@
-import {StyleSheet, Text, TouchableOpacity} from 'react-native';
+import {Text, TouchableOpacity} from 'react-native';
 import React from 'react';
 import globalStyles from '../styles/globalStyles';
 
 type SaveNoteProps = {
-  /* note: noteProps; */
   onPress: () => void;
 };
 
@@ -16,5 +15,3 @@ const SaveNote = ({onPress}: SaveNoteProps) => {
 };
 
 export default SaveNote;
-
-const styles = StyleSheet.create({});

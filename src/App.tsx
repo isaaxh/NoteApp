@@ -3,12 +3,7 @@ import Home from './screens/Home';
 import AddNote from './screens/AddNote';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import GlobalContextProvider, {
-  GlobalContextProps,
-} from './contexts/GlobalContext';
-import useGlobal from './hooks/useGlobal';
-import {createDrawerNavigator} from '@react-navigation/drawer';
-import {ScreenStackHeaderLeftView} from 'react-native-screens';
+import GlobalContextProvider from './contexts/GlobalContext';
 import EditNote from './screens/EditNote';
 
 export type RootStackParamList = {

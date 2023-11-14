@@ -1,12 +1,5 @@
-import {
-  StyleSheet,
-  View,
-  FlatList,
-  ActivityIndicator,
-  RefreshControl,
-  ScrollView,
-} from 'react-native';
-import React, {useCallback, useState} from 'react';
+import {StyleSheet, View, FlatList, ActivityIndicator} from 'react-native';
+import React from 'react';
 import SearchBar from '../components/SearchBar';
 import AddNoteBtn from '../components/AddNoteBtn';
 import Card from '../components/Card';
@@ -14,6 +7,8 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../App';
 import Header from '../components/Header';
 import useAsyncStorage from '../hooks/useAsyncStorage';
+import useGlobal from '../hooks/useGlobal';
+import {GlobalContextProps} from '../contexts/GlobalContext';
 
 export type HomeProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
@@ -22,16 +17,8 @@ const ItemSeparatorComponent = () => (
 );
 
 const Home = ({navigation}: HomeProps) => {
-  const {notes, loading, getData} = useAsyncStorage();
-  const [refreshing, setRefreshing] = useState(false);
-
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    /* getData(); */
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 2000);
-  }, []);
+  const {notes, filteredNotes} = useGlobal() as GlobalContextProps;
+  const {loading} = useAsyncStorage();
 
   return (
     <View style={styles.container}>
@@ -39,17 +26,12 @@ const Home = ({navigation}: HomeProps) => {
       <View style={styles.contentContainer}>
         <SearchBar />
         <View style={styles.main}>
-          <View
-            style={styles.cardContainer}
-            /* refreshControl={ */
-            /*   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} /> */
-            /* } */
-          >
+          <View style={styles.cardContainer}>
             {loading ? (
               <ActivityIndicator size="large" />
             ) : (
               <FlatList
-                data={notes}
+                data={filteredNotes ? filteredNotes : notes}
                 numColumns={2}
                 renderItem={({item}) => (
                   <Card
@@ -85,7 +67,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FAF9F6',
-    /* padding: 10, */
     gap: 20,
   },
   contentContainer: {
@@ -101,7 +82,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   columnWrapperStyle: {
-    gap: 40,
+    gap: 30,
   },
   ItemSeparatorComponent: {
     height: 40,
